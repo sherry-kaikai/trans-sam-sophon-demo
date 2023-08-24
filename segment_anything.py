@@ -90,52 +90,92 @@ def show_masks_on_image(raw_image, masks, scores):
       axes[i].axis("off")
     plt.show()
 
+
+
+
+
+
 import torch
+'''
+从transformer包中引入
+'''
 # from transformers import SamModel, SamProcessor,SamConfig
 
+'''
+从本地文件中引入
+'''
 from configuration_sam import SamConfig
 from modeling_sam import SamModel
 from processing_sam import SamProcessor
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+
+'''
+初始化模型 SamModel 默认是sam-vit-huge
+'''
 configuration = SamConfig()
 model = SamModel(configuration)
 configuration = model.config
-
 print(type(model.config))
-# model = SamModel.from_pretrained("facebook/sam-vit-huge").to(device)
+
+'''
+初始化模型 SamModel sam-vit-base
+'''
+# model = SamModel.from_pretrained("facebook/sam-vit-base").to(device)
 
 
+'''
+初始化预处理 SamImageProcessor sam-vit-base
+'''
 from transformers import SamImageProcessor
+# processor = SamProcessor.from_pretrained("facebook/sam-vit-base")
+
+'''
+初始化预处理 SamImageProcessor 默认是sam-vit-huge 
+'''
+# from image_processing_sam import SamImageProcessor #但是这里如果从本地导入会报错一些库包找不到
 config_processor = SamImageProcessor()
 processor = SamProcessor(config_processor)
-# processor = SamProcessor.from_pretrained("facebook/sam-vit-huge")
 
+
+
+'''
+初始化图片
+'''
 from PIL import Image
 import requests
 
 img_url = "https://huggingface.co/ybelkada/segment-anything/resolve/main/assets/car.png"
 raw_image = Image.open(requests.get(img_url, stream=True).raw).convert("RGB")
 
-# plt.imshow(raw_image)
 
+'''
+对图片预处理
+'''
 inputs = processor(raw_image, return_tensors="pt").to(device) # tensor
+# inputs = processor(raw_image) # numpy
 
-# inputs = processor(raw_image)
-
-print('inputs',inputs.keys(),inputs["pixel_values"].shape) # array
+print('inputs',inputs.keys(),inputs["pixel_values"].shape) # torch.Size([1, 3, 1024, 1024])
 print(inputs["original_sizes"],inputs["reshaped_input_sizes"]) # tensor([[1764, 2646]]) tensor([[ 683, 1024]])
 
 # image_embeddings = model.get_image_embeddings(inputs["pixel_values"])
 # print(type(image_embeddings),image_embeddings.shape) # [1, 256, 64, 64]
 
+
+'''
+推理
+'''
 outputs = model(**inputs)
 
+
+'''
+后处理
+'''
 masks = processor.image_processor.post_process_masks(
     outputs.pred_masks.cpu(), inputs["original_sizes"].cpu(), inputs["reshaped_input_sizes"].cpu()
 )
 scores = outputs.iou_scores
 
 
-print(scores)
+print(scores) # tensor([[[ 0.0049,  0.0243, -0.0214]]], grad_fn=<SliceBackward0>)
