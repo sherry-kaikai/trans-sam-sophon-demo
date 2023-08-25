@@ -20,6 +20,7 @@ model-zoo中是sam-vit-base （hugging-face默认是sam-vit-huge）
 ## 目录结构
 ```bash
 .
+├── 000000397639.jpg # 本地测试图片
 ├── configuration_sam.py # SamConfig
 ├── image_processing_sam.py # SamImageProcess
 ├── modeling_sam.py # SamModel
@@ -27,12 +28,15 @@ model-zoo中是sam-vit-base （hugging-face默认是sam-vit-huge）
 ├── processing_sam.py # SamProcess
 ├── __pycache__ 
 ├── readme.md 
-├── SAM-opencv.py # 移植到bmodel的代码
-├── segment_anything.ipynb # hugging-face 的sam运行例程 全流程
+├── sam-sophon-demo-workingspace # 运行、移植bmodel的开发文件夹
+├── segment_anything-base.ipynb # 测试发现base和huge预处理似乎没区别
+├── segment_anything.ipynb # hugging-face 的sam运行例程 全流程 【主要运行的源码】
 ├── segment_anything.py # hugging-face 的sam运行例程 全流程
+├── test_bmodel_with_ori # 存放测试产生的npy文件、以yolo为例的单独推理样例
 ├── utils
-└── utils.zip
 ```
+
+
 ## 依赖
 源码运行依赖： transformers4.31.0 torch2.0.0+cpu   py>=3.8 
 pip install -e .

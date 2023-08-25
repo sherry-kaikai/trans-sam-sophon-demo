@@ -46,24 +46,34 @@ def main(args):
     # print(input.shape)  #(1024, 1024, 3)
 
     '''
-    use ori process 
+    use ori process 使用hugging-face transformer的源码预处理
     '''
     from transformers import  SamProcessor,SamImageProcessor
     config_processor = SamImageProcessor()
     processor = SamProcessor(config_processor)
     input = np.array(processor(image)['pixel_values']) # numpy
-    input_points = np.array([[[[450, 600]]]])
+    input_points = np.array([[[[302, 300]]]])
 
     # predict  
     result = sam.predict(input,input_points)
-    # predictor.set_image(image)
+    iou_scores_Slice = result['iou_scores_Slice']
+    pred_masks_Slice = result['pred_masks_Slice']
 
-    # print(type(result))
-    # calculate speed  
+
+    print(type(iou_scores_Slice),type(pred_masks_Slice))
+    print(iou_scores_Slice.shape,pred_masks_Slice.shape) #(1, 1, 3) (1, 1, 3, 256, 256)
+    print(iou_scores_Slice)
+
+
+    '''
+    保存输出
+    '''
+    # masks = processor.image_processor.post_process_masks(pred_masks_Slice,[[480, 640]], [1, 1, 1, 2])
+    np.save("/home/sophgo/jingyu/SAM-ViT/sophon-demo-trans-Sam/test_bmodel_with_ori/"+"pred_masks.npy",pred_masks_Slice)
 
 def argsparser():
     parser = argparse.ArgumentParser(prog=__file__)
-    parser.add_argument('--input', type=str, default='/home/sophgo/jingyu/SAM-ViT/Github-ori_Code/data/input/000000000632.jpg', help='path of input')
+    parser.add_argument('--input', type=str, default='/home/sophgo/jingyu/SAM-ViT/sophon-demo-trans-Sam/000000397639.jpg', help='path of input')
     parser.add_argument('--bmodel', type=str, default='/home/sophgo/jingyu/SAM-ViT/models_bmodel/models/BM1684X/sam-vit_f32.bmodel', help='path of bmodel')
     parser.add_argument('--dev_id', type=int, default=0, help='dev id')
 
