@@ -34,7 +34,7 @@ def main(args):
     
     # initialize net 
     # todo
-    sam = SamModel('/home/sophgo/jingyu/SAM-ViT/tans-SAM-ViT/sam-vit-huge/config.json')
+    sam = SamModel()
 
     # warm up (init)
     

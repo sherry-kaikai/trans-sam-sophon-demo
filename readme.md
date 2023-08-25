@@ -33,6 +33,9 @@ model-zoo中是sam-vit-base （hugging-face默认是sam-vit-huge）
 ├── utils
 └── utils.zip
 ```
+## 依赖
+源码运行依赖： transformers4.31.0 torch2.0.0+cpu   py>=3.8 
+pip install -e .
 
 ## trans-sam代码处理方式：
 
